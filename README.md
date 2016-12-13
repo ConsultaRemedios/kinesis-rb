@@ -1,3 +1,8 @@
+[![Build Status](https://semaphoreci.com/api/v1/projects/6449b778-9dd2-49c8-a12a-18e14b3d91a1/1094949/shields_badge.svg)](https://semaphoreci.com/consultaremedios/kinesis-rb)
+[![Code Climate](https://codeclimate.com/repos/584ff2ceb0a5853f8a004266/badges/c1b9c8f8ea3358daebf0/gpa.svg)](https://codeclimate.com/repos/584ff2ceb0a5853f8a004266/feed)
+[![Test Coverage](https://codeclimate.com/repos/584ff2ceb0a5853f8a004266/badges/c1b9c8f8ea3358daebf0/coverage.svg)](https://codeclimate.com/repos/584ff2ceb0a5853f8a004266/coverage)
+[![Issue Count](https://codeclimate.com/repos/584ff2ceb0a5853f8a004266/badges/c1b9c8f8ea3358daebf0/issue_count.svg)](https://codeclimate.com/repos/584ff2ceb0a5853f8a004266/feed)
+
 # Kinesis
 
 Kinesis is a wrapper for [the official AWS SDK client](https://github.com/aws/aws-sdk-ruby).
