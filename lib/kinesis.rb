@@ -23,6 +23,10 @@ module Kinesis
       end
     end
 
+    def logger
+      configuration.logger
+    end
+
     def configuration
       Kinesis::Config.instance
     end
