@@ -40,7 +40,8 @@ describe Kinesis::Client do
   end
 
   describe '#get_records' do
-    let(:record) { double(:record, data: 'test 1', sequence_number: '0009898')}
+    let(:data) { Base64.encode64(Zlib::Deflate.deflate('test 1')) }
+    let(:record) { double(:record, data: data, sequence_number: '0009898')}
     let(:response) { double(:response, records: [record], next_shard_iterator: 'NextIterator2') }
 
     before do
@@ -61,27 +62,29 @@ describe Kinesis::Client do
   end
 
   describe '#put_record' do
+    let(:data) { Base64.encode64(Zlib::Deflate.deflate('bar 123')) }
     let(:response) { double(:response, sequence_number: '5557') }
 
     it 'send the record to stream' do
-      expect(client).to receive(:put_record).with(stream_name: 'foo', data: 'bar 123', partition_key: 'key') { response }
+      expect(client).to receive(:put_record).with(stream_name: 'foo', data: data, partition_key: 'key') { response }
       expect(subject.put_record('foo', 'bar 123', 'key')).to eq '5557'
     end
   end
 
   describe '#put_records' do
+    let(:data) { Base64.encode64(Zlib::Deflate.deflate('test123')) }
     let(:record_response) { double(:record_response, sequence_number: '1112') }
     let(:response) { double(:response, records: [record_response]) }
     let(:record) do
       {
-        data: 'test123',
+        data: data,
         partition_key: 'key'
       }
     end
 
     it 'send the record to stream' do
       expect(client).to receive(:put_records).with(stream_name: 'foo', records: [record]) { response }
-      expect(subject.put_records('foo', [record])).to eq '1112'
+      expect(subject.put_records('foo', ['test123'], 'key')).to eq '1112'
     end
   end
 end

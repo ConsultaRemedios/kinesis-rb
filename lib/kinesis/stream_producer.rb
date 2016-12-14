@@ -20,10 +20,7 @@ module Kinesis
     # @param partition_key [Integer] used by Kinesis to group the same key always to the same shard
     # @return the object
     def multi_produce(records, partition_key = 'key')
-      parsed_records = records.map do |record|
-        { data: record.to_s, partition_key: partition_key }
-      end
-      client.put_records(@stream_name, parsed_records)
+      client.put_records(@stream_name, records, partition_key)
     end
 
     private
