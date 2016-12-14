@@ -35,7 +35,7 @@ module Kinesis
     #
     # @example
     #   producer = Kinesis.build_producer 'foo'
-    #   producer.produce 'some_key', 'some message'
+    #   producer.produce 'some message', 'some_key'
     #
     # @param stream_name [String] the name of Kinesis stream.
     # @return [Kinesis::StreamProducer]
