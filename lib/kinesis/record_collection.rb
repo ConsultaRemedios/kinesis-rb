@@ -2,12 +2,12 @@ module Kinesis
   class RecordCollection
     extend Forwardable
 
-    attr_reader :records, :next_shard_iterator, :last_sequence_number
+    attr_reader :events, :next_shard_iterator, :last_sequence_number
 
-    def_delegators :records, :size, :empty?, :any?, :first, :last, :each, :map, :to_s
+    def_delegators :events, :size, :empty?, :any?, :first, :last, :each, :map, :to_s
 
-    def initialize(records, next_shard_iterator, last_sequence_number)
-      @records = records
+    def initialize(events, next_shard_iterator, last_sequence_number)
+      @events = events
       @next_shard_iterator = next_shard_iterator
       @last_sequence_number = last_sequence_number
     end
