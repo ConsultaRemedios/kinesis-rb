@@ -1,5 +1,7 @@
 require 'kinesis/record_collection'
 require 'aws-sdk'
+require 'base64'
+require 'zlib'
 
 module Kinesis
   class Client
@@ -30,26 +32,40 @@ module Kinesis
     def get_records(shard_iterator, batch_size)
       resp = client.get_records(shard_iterator: shard_iterator, limit: batch_size)
       last_sequence = resp.records.last&.sequence_number
-      record_data = resp.records.map(&:data)
+      record_data = resp.records.map { |r| uncompress(r.data) }
       Kinesis::RecordCollection.new(record_data, resp.next_shard_iterator, last_sequence)
     end
 
     def put_record(stream_name, record, partition_key)
       resp = client.put_record(
         stream_name: stream_name,
-        data: record,
+        data: compress(record),
         partition_key: partition_key)
       resp.sequence_number
     end
 
-    def put_records(stream_name, records)
+    def put_records(stream_name, records, partition_key)
       resp = client.put_records(
         stream_name: stream_name,
-        records: records)
+        records: prepare_records(records, partition_key))
       resp.records.last&.sequence_number
     end
 
     private
+
+    def prepare_records(records, partition_key)
+      records.map do |record|
+        { data: compress(record), partition_key: partition_key }
+      end
+    end
+
+    def uncompress(data)
+      Zlib::Inflate.inflate Base64.decode64(data)
+    end
+
+    def compress(data)
+      Base64.encode64 Zlib::Deflate.deflate(data.to_s)
+    end
 
     def client
       @client ||= @client_class.new(

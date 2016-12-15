@@ -10,6 +10,8 @@ require 'kinesis/checkpointer'
 require 'kinesis/shard_consumer'
 require 'kinesis/stream_consumer'
 require 'kinesis/stream_producer'
+require 'kinesis/producer_queue'
+require 'kinesis/queue_manager'
 
 module Kinesis
   class << self
@@ -23,6 +25,10 @@ module Kinesis
       end
     end
 
+    def logger
+      configuration.logger
+    end
+
     def configuration
       Kinesis::Config.instance
     end
@@ -31,7 +37,7 @@ module Kinesis
     #
     # @example
     #   producer = Kinesis.build_producer 'foo'
-    #   producer.produce 'some_key', 'some message'
+    #   producer.produce 'some message', 'some_key'
     #
     # @param stream_name [String] the name of Kinesis stream.
     # @return [Kinesis::StreamProducer]
