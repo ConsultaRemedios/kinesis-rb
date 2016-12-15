@@ -37,7 +37,7 @@ module Kinesis
 
     def produce
       @queue.process(@batch_size) do |events|
-        logger.info("[StreamProducerAsync] Producing #{events.size} events")
+        logger.info("[Kinesis] producing #{events.size} events")
         @producer.multi_produce(events) if events.any?
       end
     end
