@@ -26,7 +26,7 @@ module Kinesis
     def consume(batch_size, &block)
       start = Time.now
       record_collection = client.get_records(checkpointer.iterator, batch_size)
-      logger.debug "[Kinesis] reading #{record_collection.size} records from #{@stream_name}/#{@shard_id}"
+      logger.debug "[Kinesis] reading #{record_collection.size} records from #{@stream_name}/#{@shard_id}" if record_collection.any?
       block.call(self, record_collection) if block_given?
       checkpointer.iterator = record_collection.next_shard_iterator unless record_collection.next_shard_iterator.nil?
       checkpointer.persist(record_collection.last_sequence_number) if record_collection.any?
