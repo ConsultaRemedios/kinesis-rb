@@ -11,6 +11,7 @@ require 'kinesis/shard_consumer'
 require 'kinesis/stream_consumer'
 require 'kinesis/stream_producer'
 require 'kinesis/producer_queue'
+require 'kinesis/queue_manager'
 
 module Kinesis
   class << self
