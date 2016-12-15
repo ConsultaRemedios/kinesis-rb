@@ -49,7 +49,7 @@ describe Kinesis::Client do
     end
 
     it 'return records' do
-      expect(subject.get_records('553456dfgdfgv', 1).records).to eq ['test 1']
+      expect(subject.get_records('553456dfgdfgv', 1).events).to eq ['test 1']
     end
 
     it 'return next shard iterator' do
