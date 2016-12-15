@@ -10,6 +10,7 @@ require 'kinesis/checkpointer'
 require 'kinesis/shard_consumer'
 require 'kinesis/stream_consumer'
 require 'kinesis/stream_producer'
+require 'kinesis/producer_queue'
 
 module Kinesis
   class << self
