@@ -18,12 +18,16 @@ module Kinesis
 
     # @param sequence [String] persists the sequence to storage
     def persist(sequence)
-      puts "Persiting sequence #{storage_key}: #{sequence}"
+      logger.debug "[Kinesis] checkpoint created! #{storage_key}: #{sequence}"
       @storage.write(storage_key, sequence)
       @sequence = sequence
     end
 
     private
+
+    def logger
+      Kinesis.logger
+    end
 
     def client
       Kinesis.client
