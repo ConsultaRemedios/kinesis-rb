@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Kinesis::RecordCollection do
   let(:events) { ['record1', 'record2'] }
-  subject { described_class.new(events, 'next123', '998') }
+  subject { described_class.new(events, 'next123', '998', 10_300_100) }
 
   describe '#events' do
     it 'returns the events' do
@@ -19,6 +19,33 @@ describe Kinesis::RecordCollection do
   describe '#last_sequence_number' do
     it 'returns the last_sequence_number' do
       expect(subject.last_sequence_number).to eq '998'
+    end
+  end
+
+  describe '#millis_behind_latest' do
+    it 'returns the millis_behind_latest' do
+      expect(subject.millis_behind_latest).to eq 10_300_100
+    end
+  end
+
+  describe '#time_behind_latest' do
+    it 'returns the time behind latest in hours, minutes and seconds' do
+      expect(subject.time_behind_latest).to eq "02:51:40"
+    end
+
+    it do
+      allow(subject).to receive(:millis_behind_latest) { 1_000  }
+      expect(subject.time_behind_latest).to eq "00:00:01"
+    end
+
+    it do
+      allow(subject).to receive(:millis_behind_latest) { (60 * 1_000) + (10 * 1_000) }
+      expect(subject.time_behind_latest).to eq "00:01:10"
+    end
+
+    it do
+      allow(subject).to receive(:millis_behind_latest) { 60 * 60 * 1_000 }
+      expect(subject.time_behind_latest).to eq "01:00:00"
     end
   end
 

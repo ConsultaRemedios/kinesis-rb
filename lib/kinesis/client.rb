@@ -33,7 +33,7 @@ module Kinesis
       resp = client.get_records(shard_iterator: shard_iterator, limit: batch_size)
       last_sequence = resp.records.last&.sequence_number
       record_data = resp.records.map { |r| uncompress(r.data) }
-      Kinesis::RecordCollection.new(record_data, resp.next_shard_iterator, last_sequence)
+      Kinesis::RecordCollection.new(record_data, resp.next_shard_iterator, last_sequence, resp.millis_behind_latest)
     end
 
     def put_record(stream_name, record, partition_key)

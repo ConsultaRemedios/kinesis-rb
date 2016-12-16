@@ -16,7 +16,7 @@ class ClientMock
   end
 
   def get_records(shard_iterator, batch_size)
-    Kinesis::RecordCollection.new(['data1'], 'nextIterator222', '222')
+    Kinesis::RecordCollection.new(['data1'], 'nextIterator222', '222', 3600)
   end
 
   def put_record(stream_name, record, partition_key)

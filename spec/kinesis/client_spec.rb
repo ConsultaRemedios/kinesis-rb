@@ -42,7 +42,7 @@ describe Kinesis::Client do
   describe '#get_records' do
     let(:data) { Base64.encode64(Zlib::Deflate.deflate('test 1')) }
     let(:record) { double(:record, data: data, sequence_number: '0009898')}
-    let(:response) { double(:response, records: [record], next_shard_iterator: 'NextIterator2') }
+    let(:response) { double(:response, records: [record], next_shard_iterator: 'NextIterator2', millis_behind_latest: 3600) }
 
     before do
       allow(client).to receive(:get_records).with(shard_iterator: '553456dfgdfgv', limit: 1) { response }
@@ -58,6 +58,10 @@ describe Kinesis::Client do
 
     it 'return last sequence number' do
       expect(subject.get_records('553456dfgdfgv', 1).last_sequence_number).to eq '0009898'
+    end
+
+    it 'return millis behind latest' do
+      expect(subject.get_records('553456dfgdfgv', 1).millis_behind_latest).to eq 3600
     end
   end
 
