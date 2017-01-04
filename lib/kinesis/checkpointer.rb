@@ -42,7 +42,7 @@ module Kinesis
     end
 
     def iterator_type
-      sequence_present? ? 'AFTER_SEQUENCE_NUMBER' : 'TRIM_HORIZON'
+      sequence_present? ? 'AFTER_SEQUENCE_NUMBER' : 'LATEST'
     end
 
     def sequence_present?
