@@ -8,7 +8,16 @@ describe Kinesis::Checkpointer do
 
   before do
     allow(Kinesis).to receive(:client) { client }
-    allow(client).to receive(:shard_iterator) { '123' }
+    allow(client).to receive(:shard_iterator).with('foo', 'id-123', 'AFTER_SEQUENCE_NUMBER', '555') { '123' }
+  end
+
+  describe '#refresh_iterator!' do
+    it 'refenerates a new iterator' do
+      subject.persist('999')
+      expect(client).to receive(:shard_iterator).with('foo', 'id-123', 'AFTER_SEQUENCE_NUMBER', '999') { 'abcd'}
+      subject.refresh_iterator!
+      expect(subject.iterator).to eq 'abcd'
+    end
   end
 
   describe '#sequence' do
