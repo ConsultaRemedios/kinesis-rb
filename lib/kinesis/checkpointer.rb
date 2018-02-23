@@ -23,6 +23,10 @@ module Kinesis
       @sequence = sequence
     end
 
+    def refresh_iterator!
+      @iterator = fetch_iterator
+    end
+
     private
 
     def logger

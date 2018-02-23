@@ -30,12 +30,19 @@ module Kinesis
         logger.debug "[Kinesis] reading #{record_collection.size} records from #{@stream_name}/#{@shard_id} (#{record_collection.time_behind_latest} behind)"
       end
       block.call(self, record_collection) if block_given?
-      checkpointer.iterator = record_collection.next_shard_iterator unless record_collection.next_shard_iterator.nil?
       checkpointer.persist(record_collection.last_sequence_number) if record_collection.any?
+      if record_collection.next_shard_iterator.nil?
+        checkpointer.refresh_iterator!
+      else
+        checkpointer.iterator = record_collection.next_shard_iterator
+      end
 
       # Whe the block execution takes less than one second if forces a sleep to
       # avoid throughput limit exception
       sleep 1 if Time.now - start < 1.0
+    rescue Aws::Kinesis::Errors::ExpiredIteratorException
+      checkpointer.refresh_iterator!
+      retry
     rescue Aws::Kinesis::Errors::ProvisionedThroughputExceededException
       raise Kinesis::ThroughputExceededError
     end
