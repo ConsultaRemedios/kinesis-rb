@@ -1,5 +1,6 @@
 require 'simplecov'
 SimpleCov.start
+SimpleCov.refuse_coverage_drop
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'kinesis'

@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+  RAILS_ENV: test
+  CI: true
+
+jobs:
+  cleanup-runs:
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
+
+    steps:
+      - uses: rokroskar/workflow-run-cleanup-action@9456bf167fd55450538667086116f1c577c970eb
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:5
+        ports: ['6379:6379']
+        options: >-
+          --entrypoint redis-server
+
+    steps:
+      - name: Setup Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby 2.5.0
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.5.0
+
+      - name: Installing Gems
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 2 --retry 3
+
+      - name: Set ENV for Code Climate
+        run: |
+          echo "::set-env name=GIT_BRANCH::$GITHUB_REF"
+          echo "::set-env name=GIT_COMMIT_SHA::$GITHUB_SHA"
+
+      - name: Prepare Code Climate Test Reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+
+      - name: RSpec
+        run: bundle exec rake spec
+
+      - name: Report Coverage to Code Climate
+        run: ./cc-test-reporter after-build -t simplecov --exit-code $?
+
+      - name: Upload Coverage Results
+        uses: actions/upload-artifact@v1
+        with:
+          name: simplecov-report
+          path: coverage

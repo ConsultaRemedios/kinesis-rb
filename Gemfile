@@ -4,6 +4,5 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'codeclimate-test-reporter', require: nil
-  gem 'simplecov'
+  gem 'simplecov', '0.17'
 end
