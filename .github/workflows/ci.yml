@@ -11,6 +11,7 @@ env:
   CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   RAILS_ENV: test
   CI: true
+  RUBY_VERSION: 2.7.2
 
 jobs:
   cleanup-runs:
@@ -18,7 +19,7 @@ jobs:
     if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
 
     steps:
-      - uses: rokroskar/workflow-run-cleanup-action@9456bf167fd55450538667086116f1c577c970eb
+      - uses: rokroskar/workflow-run-cleanup-action@213fe75c3e785223a02c3cc50b1639f1deeb9eec
 
   tests:
     name: Tests
@@ -35,10 +36,12 @@ jobs:
       - name: Setup Repository
         uses: actions/checkout@v2
 
-      - name: Setup Ruby 2.5.0
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.5.0
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+          bundler: 1
 
       - name: Installing Gems
         run: |
@@ -47,8 +50,8 @@ jobs:
 
       - name: Set ENV for Code Climate
         run: |
-          echo "::set-env name=GIT_BRANCH::$GITHUB_REF"
-          echo "::set-env name=GIT_COMMIT_SHA::$GITHUB_SHA"
+          echo "GIT_BRANCH=$GITHUB_REF" >> $GITHUB_ENV
+          echo "GIT_COMMIT_SHA=$GITHUB_SHA" >> $GITHUB_ENV
 
       - name: Prepare Code Climate Test Reporter
         run: |

@@ -1,5 +1,5 @@
 require 'kinesis/record_collection'
-require 'aws-sdk'
+require 'aws-sdk-kinesis'
 require 'base64'
 require 'zlib'
 
